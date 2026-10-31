@@ -21,9 +21,11 @@ jobs:
         version: 12
 
     - name: install deps
+      working-directory: ./web
       run: pnpm install
 
     - name: build project
+      working-directory: ./web
       run: pnpm build
 
     - name: build image
