@@ -8,8 +8,27 @@ on:
     types: [closed]
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v6
+
+    - name: use pnpm
+      uses: pnpm/action-setup@v6
+      with:
+        version: 12
+
+    - name: install deps
+      working-directory: ./web
+      run: pnpm install
+
+    - name: run tests
+      working-directory: ./web
+      run: pnpm test:run
 
   build:
+    needs: test
     runs-on: ubuntu-latest
     steps:
     - name: checkout
