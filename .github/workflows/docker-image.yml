@@ -10,9 +10,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
+
+    - name: install pnpm and node
+      uses: pnpm/setup@v1
+      with:
+        version: 12
+        runtime: node@26
+        cache: true
+
+    - name: install deps
+      run: pnpm install
+
+    - name: build project
+      run: pnpm build
+
     - name: build image
       run: docker build ./web -t spikycham/ci-test-web:${{ github.sha }}
     - name: push image
       run: |
+        docker login -u spikycham -p ${{ secrets.DOCKER_HUB_TOKEN }}
         docker push spikycham/ci-test-web:${{ github.sha }}
