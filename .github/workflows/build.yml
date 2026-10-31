@@ -14,12 +14,8 @@ jobs:
     - name: checkout
       uses: actions/checkout@v6
 
-    - name: install pnpm and node
-      uses: pnpm/setup@v1
-      with:
-        version: 12
-        runtime: node@26
-        cache: true
+    - name: use pnpm
+      uses: pnpm/action-setup@6
 
     - name: install deps
       run: pnpm install
