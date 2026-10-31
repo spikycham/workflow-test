@@ -33,6 +33,8 @@ jobs:
         SHA: ${{ github.sha }}
       run: docker build ./web -t 450139220/ci-test-web:${SHA:0:4}
     - name: push image
+      env:
+        SHA: ${{ github.sha }}
       run: |
         docker login -u 450139220 -p ${{ secrets.DOCKER_HUB_TOKEN }}
         docker push 450139220/ci-test-web:${SHA:0:4}
