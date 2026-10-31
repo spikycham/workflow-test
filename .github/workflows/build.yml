@@ -3,6 +3,9 @@ name: Docker Image CI
 on:
   push:
     branches: ["main"]
+    paths:
+      - "./web/Dockerfile"
+      - "./server/Dockerfile"
   pull_request:
     branches: [ "main" ]
     types: [closed]
@@ -29,8 +32,10 @@ jobs:
       run: pnpm build
 
     - name: build image
-      run: docker build ./web -t 450139220/ci-test-web:${{ github.sha }}
+      env:
+        SHA: ${{ github.sha }}
+      run: docker build ./web -t 450139220/ci-test-web:${SHA:0:4}
     - name: push image
       run: |
         docker login -u 450139220 -p ${{ secrets.DOCKER_HUB_TOKEN }}
-        docker push 450139220/ci-test-web:${{ github.sha }}
+        docker push 450139220/ci-test-web:${SHA:0:4}
