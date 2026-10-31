@@ -79,3 +79,5 @@ But here is a thing, we need a docker access token to let the GitHub workflow se
 After all these done, the pipeline will run well. You should see a new docker image in your docker hub for each git push.
 
 ## Moving on to CD
+
+If we want to know when the build is going to be over, we need a service to wait for the GitHub workflow's notification. And that's what GitHub webhooks does.
