@@ -4,7 +4,7 @@ on:
   push:
     branches: ["main"]
     paths:
-      - "./web/Dockerfile"
+      - "./web/VERSION"
       - "./server/Dockerfile"
   pull_request:
     branches: [ "main" ]
