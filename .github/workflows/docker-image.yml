@@ -1,0 +1,18 @@
+name: Docker Image CI
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+    - name: build image
+      run: docker build ./web -t spikycham/ci-test-web:${{ github.sha }}
+    - name: push image
+      run: |
+        docker push spikycham/ci-test-web:${{ github.sha }}
