@@ -29,8 +29,8 @@ jobs:
       run: pnpm build
 
     - name: build image
-      run: docker build ./web -t spikycham/ci-test-web:${{ github.sha }}
+      run: docker build ./web -t 450139220/ci-test-web:${{ github.sha }}
     - name: push image
       run: |
-        docker login -u spikycham -p ${{ secrets.DOCKER_HUB_TOKEN }}
-        docker push spikycham/ci-test-web:${{ github.sha }}
+        docker login -u 450139220 -p ${{ secrets.DOCKER_HUB_TOKEN }}
+        docker push 450139220/ci-test-web:${{ github.sha }}
