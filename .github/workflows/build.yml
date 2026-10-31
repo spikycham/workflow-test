@@ -3,9 +3,6 @@ name: Docker Image CI
 on:
   push:
     branches: ["main"]
-    paths:
-      - "web/VERSION"
-      - "server/Dockerfile"
   pull_request:
     branches: [ "main" ]
     types: [closed]
