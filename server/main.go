@@ -63,7 +63,8 @@ func runDocker(imageName string) {
 	defer cacenl()
 
 	cmd := exec.CommandContext(ctx, "docker", "run", "--rm", imageName, "--name", "ci-test-web", "-p", "20004:80", "-d")
-	if err := cmd.Run(); err != nil {
+	_, err := cmd.CombinedOutput()
+	if err != nil {
 		log.Printf("[ERROR] failed to run docker: %v", err)
 		return
 	}
