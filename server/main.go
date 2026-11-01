@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -38,9 +39,11 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 			if conclusion == "success" {
 				run := e.WorkflowRun
 				sha := run.GetHeadSHA()[:4]
-
-				// TODO: run docker
+				runDocker(fmt.Sprintf("450139220/ci-test-web:%s", sha))
 			}
+		} else {
+			http.Error(w, "not required", http.StatusBadRequest)
+			return
 		}
 	default:
 		log.Print("[INFO] default event")
@@ -51,3 +54,5 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("OK"))
 }
+
+func runDocker(image string) {}
