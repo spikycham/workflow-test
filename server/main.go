@@ -35,7 +35,9 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 		action := e.GetAction()
 		if action == "completed" && e.WorkflowRun.Conclusion != nil {
 			conclusion := e.WorkflowRun.GetConclusion()
-			log.Printf("[INFO] conclusion=%s", conclusion)
+			if conclusion == "success" {
+				// TODO: run docker
+			}
 		}
 	default:
 		log.Print("[INFO] default event")
