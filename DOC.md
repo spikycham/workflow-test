@@ -118,3 +118,14 @@ func runDocker(containerName, imageName string) {
 ## Make the CD Service in A Container Affect the Host
 
 Now we can actually run the new image as long as we push the code to remote repository. But here is still an important problem, we should actually run this service in a container, and the commands we write here only affects the container itself. So we need to explore how to connect the container commands to the host environment.
+
+It's easy to know that we must have a docker CLI installed inside of the docker container for running the docker commands, otherwise the program may throw errors. So for a go service, we know that we can compile the program, and copy the artifact to another container with alpine image to run it. And the key is to install the docker inside of the alpine container, with a command in the dockerfile `RUN apk add --no-cache docker-cli`.
+
+And after that, we just need to mount the host's docker socket by `-v /var/run/docker.sock:/var/run/docker.sock \`. This gives your service access to the host's docker daemon, and you don't need to change your service code for even one line.
+
+> NOTE: Access to /var/run/docker.sock effectively grants root-level control over the host.
+
+## Result
+
+This is wonderful. After all these done, you can just code your new feature, and push to your remote repository (or create a pull request and merge it to main branch). Then the website is going to be updated automatically!
+
