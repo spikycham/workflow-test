@@ -42,7 +42,7 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 			if conclusion == "success" {
 				run := e.WorkflowRun
 				sha := run.GetHeadSHA()[:4]
-				runDocker(fmt.Sprintf("450139220/ci-test-web:%s", sha))
+				runDocker("ci-test-web", fmt.Sprintf("450139220/ci-test-web:%s", sha))
 			}
 		} else {
 			http.Error(w, "not required", http.StatusBadRequest)
@@ -58,9 +58,20 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("OK"))
 }
 
-func runDocker(imageName string) {
+func runDocker(containerName, imageName string) {
 	ctx, cacenl := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cacenl()
+
+	stop := exec.CommandContext(ctx, "docker", "stop", containerName)
+	if err := stop.Run(); err != nil {
+		log.Printf("[ERROR] failed to stop: %v", err)
+		return
+	}
+	rm := exec.CommandContext(ctx, "docker", "rm", containerName)
+	if err := rm.Run(); err != nil {
+		log.Printf("[ERROR] failed to remove: %v", err)
+		return
+	}
 
 	pull := exec.CommandContext(ctx, "docker", "pull", imageName)
 	if err := pull.Run(); err != nil {
@@ -68,7 +79,7 @@ func runDocker(imageName string) {
 		return
 	}
 
-	cmd := exec.CommandContext(ctx, "docker", "run", imageName, "--name", "ci-test-web", "-p", "20004:80", "-d")
+	cmd := exec.CommandContext(ctx, "docker", "run", "--name", containerName, "-p", "20004:80", "-d", imageName)
 	if err := cmd.Run(); err != nil {
 		log.Printf("[ERROR] failed to run docker: %v", err)
 		return
