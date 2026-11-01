@@ -80,4 +80,6 @@ After all these done, the pipeline will run well. You should see a new docker im
 
 ## Moving on to CD
 
-If we want to know when the build is going to be over, we need a service to wait for the GitHub workflow's notification. And that's what GitHub webhooks does.
+If we want to know when the build is going to be over, we need a service to wait for the GitHub workflow's notification. And that's what GitHub webhooks does. Create a webhook in settings to listen to the workflow run event, and use a service to wait for the post request sent by the webhook. And the event is not that specified, like a workflow run event contains the `requested/in_progress/completed` stages.
+
+We could check the action and the conclusion of a webhook request in our endpoint, pull and run the docker image when the action is `completed` and the conclusion is `success`.
