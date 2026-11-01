@@ -30,11 +30,10 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// switch e := event.(type) {
-	switch event.(type) {
+	switch e := event.(type) {
 	case *github.WorkflowRunEvent:
-		log.Print("[INFO] workflow run event")
-		// action := e.GetAction()
+		action := e.GetAction()
+		log.Printf("[INFO] action=%s", action)
 		//
 		// if action == "completed" && e.WorkflowRun.Conclusion != nil {
 		// 	conclusion := e.WorkflowRun.GetConclusion()
