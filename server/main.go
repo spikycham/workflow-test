@@ -30,32 +30,34 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	switch e := event.(type) {
+	// switch e := event.(type) {
+	switch event.(type) {
 	case *github.WorkflowRunEvent:
-		action := e.GetAction()
-
-		if action == "completed" && e.WorkflowRun.Conclusion != nil {
-			conclusion := e.WorkflowRun.GetConclusion()
-
-			if conclusion == "failure" {
-				http.Error(w, "workflow failed", http.StatusBadRequest)
-				log.Println("[ERROR] workflow failed")
-				return
-			} else if conclusion == "completed" {
-				// TODO: deploy docker image
-				log.Printf("[SUCCESS] workflow completed")
-
-				w.WriteHeader(http.StatusOK)
-				w.Write([]byte("OK"))
-				return
-			}
-		}
+		log.Print("[INFO] workflow run event")
+		// action := e.GetAction()
+		//
+		// if action == "completed" && e.WorkflowRun.Conclusion != nil {
+		// 	conclusion := e.WorkflowRun.GetConclusion()
+		//
+		// 	if conclusion == "failure" {
+		// 		http.Error(w, "workflow failed", http.StatusBadRequest)
+		// 		log.Println("[ERROR] workflow failed")
+		// 		return
+		// 	} else if conclusion == "completed" {
+		// 		// TODO: deploy docker image
+		// 		log.Printf("[SUCCESS] workflow completed")
+		//
+		// 		w.WriteHeader(http.StatusOK)
+		// 		w.Write([]byte("OK"))
+		// 		return
+		// 	}
+		// }
 	default:
+		log.Print("[INFO] default event")
 		http.Error(w, "not workflow run event", http.StatusBadRequest)
 		return
 	}
 
-	log.Printf("[INFO] event: %v", event)
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("OK"))
 }
