@@ -1,9 +1,12 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
+	"os/exec"
+	"time"
 
 	"github.com/google/go-github/v93/github"
 )
@@ -55,4 +58,15 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("OK"))
 }
 
-func runDocker(image string) {}
+func runDocker(imageName string) {
+	ctx, cacenl := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cacenl()
+
+	cmd := exec.CommandContext(ctx, "docker", "run", "--rm", imageName, "--name", "ci-test-web", "-p", "20004:80", "-d")
+	if err := cmd.Run(); err != nil {
+		log.Printf("[ERROR] failed to run docker: %v", err)
+		return
+	}
+
+	log.Printf("[INFO] success to run docker")
+}
