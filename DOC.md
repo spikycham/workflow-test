@@ -82,4 +82,39 @@ After all these done, the pipeline will run well. You should see a new docker im
 
 If we want to know when the build is going to be over, we need a service to wait for the GitHub workflow's notification. And that's what GitHub webhooks does. Create a webhook in settings to listen to the workflow run event, and use a service to wait for the post request sent by the webhook. And the event is not that specified, like a workflow run event contains the `requested/in_progress/completed` stages.
 
-We could check the action and the conclusion of a webhook request in our endpoint, pull and run the docker image when the action is `completed` and the conclusion is `success`.
+We could check the action and the conclusion of a webhook request in our endpoint, pull and run the docker image when the action is `completed` and the conclusion is `success`. And remember to stop the original docker container. If you need the ability of rollback, you should keep the original docker container. Otherwise, you can just delete it. Here I'm not going to keep it.
+
+```go
+func runDocker(containerName, imageName string) {
+	ctx, cacenl := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cacenl()
+
+	stop := exec.CommandContext(ctx, "docker", "stop", containerName)
+	if err := stop.Run(); err != nil {
+		log.Printf("[ERROR] failed to stop: %v", err)
+	}
+	rm := exec.CommandContext(ctx, "docker", "rm", containerName)
+	if err := rm.Run(); err != nil {
+		log.Printf("[ERROR] failed to remove: %v", err)
+	}
+
+    // I think there should be an approach to clean up the old images as well. I may try to design a method to handle this in the future.
+	pull := exec.CommandContext(ctx, "docker", "pull", imageName)
+	if err := pull.Run(); err != nil {
+		log.Printf("[ERROR] failed to pull: %v", err)
+		return
+	}
+
+	cmd := exec.CommandContext(ctx, "docker", "run", "--name", containerName, "-p", "20004:80", "-d", imageName)
+	if err := cmd.Run(); err != nil {
+		log.Printf("[ERROR] failed to run docker: %v", err)
+		return
+	}
+
+	log.Printf("[INFO] success to run docker")
+}
+```
+
+## Make the CD Service in A Container Affect the Host
+
+Now we can actually run the new image as long as we push the code to remote repository. But here is still an important problem, we should actually run this service in a container, and the commands we write here only affects the container itself. So we need to explore how to connect the container commands to the host environment.
