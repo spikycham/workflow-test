@@ -32,26 +32,11 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 
 	switch e := event.(type) {
 	case *github.WorkflowRunEvent:
-		// action := e.GetAction()
-		status := e.WorkflowRun.GetStatus()
-		log.Printf("[INFO] status=%s", status)
-		//
-		// if action == "completed" && e.WorkflowRun.Conclusion != nil {
-		// 	conclusion := e.WorkflowRun.GetConclusion()
-		//
-		// 	if conclusion == "failure" {
-		// 		http.Error(w, "workflow failed", http.StatusBadRequest)
-		// 		log.Println("[ERROR] workflow failed")
-		// 		return
-		// 	} else if conclusion == "completed" {
-		// 		// TODO: deploy docker image
-		// 		log.Printf("[SUCCESS] workflow completed")
-		//
-		// 		w.WriteHeader(http.StatusOK)
-		// 		w.Write([]byte("OK"))
-		// 		return
-		// 	}
-		// }
+		action := e.GetAction()
+		if action == "completed" && e.WorkflowRun.Conclusion != nil {
+			conclusion := e.WorkflowRun.GetConclusion()
+			log.Printf("[INFO] conclusion=%s", conclusion)
+		}
 	default:
 		log.Print("[INFO] default event")
 		http.Error(w, "not workflow run event", http.StatusBadRequest)
