@@ -62,9 +62,14 @@ func runDocker(imageName string) {
 	ctx, cacenl := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cacenl()
 
-	cmd := exec.CommandContext(ctx, "docker", "run", "--rm", imageName, "--name", "ci-test-web", "-p", "20004:80", "-d")
-	_, err := cmd.CombinedOutput()
-	if err != nil {
+	pull := exec.CommandContext(ctx, "docker", "pull", imageName)
+	if err := pull.Run(); err != nil {
+		log.Printf("[ERROR] failed to pull: %v", err)
+		return
+	}
+
+	cmd := exec.CommandContext(ctx, "docker", "run", imageName, "--name", "ci-test-web", "-p", "20004:80", "-d")
+	if err := cmd.Run(); err != nil {
 		log.Printf("[ERROR] failed to run docker: %v", err)
 		return
 	}
