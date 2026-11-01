@@ -33,7 +33,7 @@ repository/
 └── web/
 ```
 
-This is a minial template for a workflow YAML file. It's easy to know what each field does.
+This is a minial template for a workflow YAML file. It's easy to know what each field does. The `github.sha` is actually the new commit hash value.
 
 ```yml
 name: CI Practice
