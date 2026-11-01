@@ -65,12 +65,10 @@ func runDocker(containerName, imageName string) {
 	stop := exec.CommandContext(ctx, "docker", "stop", containerName)
 	if err := stop.Run(); err != nil {
 		log.Printf("[ERROR] failed to stop: %v", err)
-		return
 	}
 	rm := exec.CommandContext(ctx, "docker", "rm", containerName)
 	if err := rm.Run(); err != nil {
 		log.Printf("[ERROR] failed to remove: %v", err)
-		return
 	}
 
 	pull := exec.CommandContext(ctx, "docker", "pull", imageName)
