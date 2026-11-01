@@ -37,8 +37,8 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 			conclusion := e.WorkflowRun.GetConclusion()
 			if conclusion == "success" {
 				run := e.WorkflowRun
-				sha := run.GetHeadSHA()
-				log.Printf("[INFO] sha=%s", sha)
+				sha := run.GetHeadSHA()[:4]
+
 				// TODO: run docker
 			}
 		}
